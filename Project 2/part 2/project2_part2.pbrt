@@ -1,0 +1,99 @@
+
+#
+# The following lines define the size of the output image and the name of
+# of the file containing the result of rendering
+#
+Film "image" "string filename" ["project2_part2.exr"]
+	"integer xresolution" [600] "integer yresolution" [600]
+
+#
+# Sampling specification: PBRT will shoot 4 samples rays per pixel.
+# Increasing the number of samples per pixel will increase image quality
+# at the cost of increased rendering time.  Feel free to crank this value
+# up in your final images.
+#
+
+Sampler "halton" "integer pixelsamples" [40]
+
+#
+# Integrator specification: PBRT will compute a single bounce of light.
+# Increasing maxdepth increases the bounces of light computed, and will
+# drastically increase the noise of the final image. To decrease noise,
+# increase the pixelsamples of the sampler above
+#
+Integrator "path" "integer maxdepth" [1]
+
+#
+# Camera configuration: the camera is located on the Z axis, and is
+# pointed at the center of the scene
+#
+LookAt 0 10 20  0 0 0   0 1 0
+Camera "perspective" "float fov" [22]
+
+WorldBegin
+
+# ----------------------------------------------------------------------------------------------------------------
+# light source configuration:  The next region of the pbrt scene file
+# defines the light sources that illuminate the scene.  Currently the
+# scene is illuminated by a single spotlight source
+#
+#
+# Spotlight source with 60 degree cone angle pointed at the center of
+# the scene
+#
+LightSource "spot" "color I" [50 50 50] "point from" [-1 4 4] "point to" [0 1 0] "float coneangle" [60]
+
+LightSource "spot" "color I" [50 50 50] "point from" [0 -10 0] "point to" [0 1 0] "float coneangle" [60]
+
+#
+# Arealight (example)
+#
+
+# Back light
+#AttributeBegin
+#    AreaLightSource "area" "color L" [255 255 255]
+#    Translate 0 2 0
+#    Shape "sphere" "float radius" [.25]
+#AttributeEnd
+
+#AttributeBegin
+#  AreaLightSource "area" "color L" [10 10 10]
+#  # use camera coordinate system (optional)
+#  CoordSysTransform "camera"
+#  # adjust light source position
+#  Translate 0 0 -2
+#  Rotate 90 1 0 0
+#  # define the shape of the arealight to be a disk with radius 1.5
+#  Shape "disk" "float radius" [1.5]
+#AttributeEnd
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# The following sections define scene geometry and the material properties
+#
+
+#
+# Head model
+#
+Material "uber" "color Kd" [0.89 0.72 0.59 ] "color Ks" [0.05 0.05 .05]
+AttributeBegin
+Translate -1 -7 -2
+Rotate 90 1 0 0
+Rotate 90 0 0 1
+Scale 1 1 1
+Include "head_model.pbrt"
+AttributeEnd
+
+#
+# Raymarched Height Field
+#
+Material "uber" "color Kd" [0.76 0.69 0.5] "color Ks" [0.05 0.05 .05]
+AttributeBegin
+Shape "raymarchedheightfield" "float radius" 3
+Scale 0.2 0.2 0.2
+AttributeEnd
+
+
+
+
+WorldEnd
